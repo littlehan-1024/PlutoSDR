@@ -52,14 +52,15 @@ def start_gui(config_ready_event, update_callback):
 
     # SDR类型下拉菜单
     ttk.Label(main_frame, text="SDR 类型:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
-    sdr_type_var = tk.StringVar(value="adi.ad9361")
-    sdr_type_dropdown = ttk.OptionMenu(main_frame, sdr_type_var, "adi.ad9361", "adi.ad9361", "adi.ad9364")
+    sdr_type_var = tk.StringVar(value="adi.Pluto")
+    sdr_type_dropdown = ttk.OptionMenu(main_frame, sdr_type_var, "adi.Pluto", "adi.Pluto", "adi.ad9364")
     sdr_type_dropdown.grid(row=0, column=1, sticky=tk.W, padx=5, pady=5)
 
     # 设备地址输入
     ttk.Label(main_frame, text="设备地址:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
     device_address_entry = ttk.Entry(main_frame, width=30)
     device_address_entry.grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
+    device_address_entry.insert(0,'ip:192.168.2.1')
 
     # "Debug 模式" 复选框
     debug_mode_var = tk.BooleanVar(value=False)  # 默认关闭
@@ -74,7 +75,7 @@ def start_gui(config_ready_event, update_callback):
     # 参数配置输入框
     labels = ["rx_rf_bandwidth", "sample_rate", "rx_lo", "tx_lo", "tx_cyclic_buffer",
               "tx_hardwaregain_chan0", "gain_control_mode_chan0", "rx_enabled_channels", "tx_enabled_channels"]
-    default_values = ["20e6", "6.4e6", "2000000000", "2000000000", "True", "-30", "slow_attack", "0", "0"]
+    default_values = ["2000000", "521000", "101700000", "2400000000", "True", "-30", "slow_attack", "0", "0"]
 
     entries = {}
     start_row = 4
@@ -107,18 +108,18 @@ def start_gui(config_ready_event, update_callback):
                 sdr = main.ad9364()
             else:  # 运行模式
                 if device_address.startswith("usb:"):
-                    if sdr_type == "adi.ad9361":
-                        sdr = adi.ad9361(uri_ctx=device_address)
+                    if sdr_type == "adi.Pluto":
+                        sdr = adi.Pluto(device_address)
                     elif sdr_type == "adi.ad9364":
-                        sdr = adi.ad9364(uri_ctx=device_address)
+                        sdr = adi.ad9364(device_address)
                     else:
                         status_label.config(text="未知的SDR类型。")
                         return
-                else:
-                    if sdr_type == "adi.ad9361":
-                        sdr = adi.ad9361(url=device_address)
+                else :
+                    if sdr_type == "adi.Pluto":
+                        sdr = adi.Pluto(device_address)
                     elif sdr_type == "adi.ad9364":
-                        sdr = adi.ad9364(url=device_address)
+                        sdr = adi.ad9364(device_address)
                     else:
                         status_label.config(text="未知的SDR类型。")
                         return

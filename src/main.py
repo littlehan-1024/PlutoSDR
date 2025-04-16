@@ -1,3 +1,6 @@
+import adi
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import time
 from scipy import signal
@@ -91,13 +94,13 @@ if __name__ == '__main__':
     # 创建用于在线程间传递数据的队列
     data_queue = queue.Queue()
     # ChatGPT 创建本地QPSK 12bits Fs=6.4e6 BW=300e3 IQ file
-    gen_thread = threading.Thread(target=gen_qpsk_iq_file,daemon=True)
-    gen_thread.start()
+    #gen_thread = threading.Thread(target=gen_qpsk_iq_file,daemon=True)
+    #gen_thread.start()
     # ChatGPT 本地调试FM相干解调器
-    fm_tread = threading.Thread(target=Fm_decoder.fm_decoder, daemon=True)
-    fm_tread.start()
-    # 启动GUI线程（独立运行，不干扰主线程及其他子线程）
-    gui_thread = threading.Thread(target=Start_GUI.start_gui, args=(config_ready_event, update_sdr_config), daemon=True)
+    #fm_tread = threading.Thread(target=Fm_decoder.fm_decoder, daemon=True)
+    #fm_tread.start()
+    # 启动GUI线程（设置为主线程，退出时整个应用退出）
+    gui_thread = threading.Thread(target=Start_GUI.start_gui, args=(config_ready_event, update_sdr_config), daemon=False)
     gui_thread.start()
 
     # 主线程等待GUI中完成SDR配置
@@ -106,15 +109,15 @@ if __name__ == '__main__':
     print("配置已完成，启动其他子线程。")
 
     # 启动TX发送线程
-    tx_thread = threading.Thread(target=Tx_SDR.prepare_and_send_tx_iq_data, args=(sdr,))
+    tx_thread = threading.Thread(target=Tx_SDR.prepare_and_send_tx_iq_data, args=(sdr,), daemon=True)
     tx_thread.start()
 
     # 启动RX接收线程
-    rx_thread = threading.Thread(target=Rx_SDR.rx_from_sdr, args=(sdr, data_queue, record_iq, iq_file_handle,))
+    rx_thread = threading.Thread(target=Rx_SDR.rx_from_sdr, args=(sdr, data_queue, record_iq, iq_file_handle,), daemon=True)
     rx_thread.start()
 
     # 启动实时绘图线程
-    plot_thread = threading.Thread(target=plot_data, args=(data_queue,))
+    plot_thread = threading.Thread(target=plot_data, args=(data_queue,), daemon=True)
     plot_thread.start()
 
     # 监控 GUI 线程状态
