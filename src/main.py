@@ -81,7 +81,7 @@ def gen_qpsk_iq_file():
     iq_interleaved = np.column_stack((iq_signal.real, iq_signal.imag)).ravel().astype(np.float32)  # 交织 I/Q 数据
 
     # 保存到文件
-    file_path = "./Resource/6400kHz_300kHz_10s.float32"
+    file_path = "../Resource/6400kHz_300kHz_10s.float32"
     iq_interleaved.tofile(file_path)
 
     print(f"文件已保存：{file_path}")
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     gen_thread = threading.Thread(target=gen_qpsk_iq_file,daemon=True)
     gen_thread.start()
     # ChatGPT 本地调试FM相干解调器
-    fm_tread = threading.Thread(target=Fm_decoder.fm_decoder,daemon=True)
+    fm_tread = threading.Thread(target=Fm_decoder.fm_decoder, daemon=True)
     fm_tread.start()
     # 启动GUI线程（独立运行，不干扰主线程及其他子线程）
     gui_thread = threading.Thread(target=Start_GUI.start_gui, args=(config_ready_event, update_sdr_config), daemon=True)
