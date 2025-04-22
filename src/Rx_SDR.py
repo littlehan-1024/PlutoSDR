@@ -9,7 +9,7 @@ def rx_from_sdr(sdr, data_queue, record_iq, iq_file_handle):
         x = sdr.rx()
         data_queue.put(x)
         # 若“记录IQ数据”被选中，则保存数据到文件
-        if record_iq is not None and record_iq.get():
+        if record_iq is not None:
             if iq_file_handle is None:
                 # 根据当前SDR配置构建文件名：rx_lo_rx_rf_bandwidth_sample_rate_mmdd.float32
                 rx_lo = sdr.rx_lo
